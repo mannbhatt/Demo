@@ -1,0 +1,76 @@
+---
+import { fetchLongBenefits, fetchShortBenefits } from '../utils/sanityData';
+
+
+const longBenefits = await fetchLongBenefits();
+const shortBenefits = await fetchShortBenefits();
+
+
+const detailedFeatures = longBenefits.map((benefit) => ({
+  title: benefit.title,
+  description: benefit.description,
+
+  icon: benefit.icon || "./public/building.svg", 
+
+}));
+
+const shortFeatures = shortBenefits.map((benefit) => ({
+  title: benefit.title,
+  description: benefit.description,
+}));
+
+
+const {
+  heading = "Our Main Benefits",
+  subheading = "Discover the key benefits of partnering with us. Our focus is on providing innovative and sustainable solutions.",
+} = Astro.props;
+---
+
+<section class="py-16 container mx-auto px-4">
+  <div
+    class="tracking-tight mx-auto border rounded-3xl p-6 md:p-16 bg-blue-950"
+  >
+    <div class="text-center leading-normal mb-10">
+      <h2
+        class="text-4xl lg:text-5xl font-bold lg:leading-9 pt-4 text-white mb-2"
+      >
+        {heading}
+      </h2>
+      <p class="text-gray-300 max-w-md pt-2 mx-auto">
+{subheading}      </p>
+    </div>
+
+    <div
+      class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-6"
+    >
+      {
+        detailedFeatures.map((feature) => (
+          <div class="bg-white p-4 rounded-2xl space-y-2 border-4 border-blue-900">
+            <div
+              class="flex items-center justify-center h-12 w-12 p-3 rounded-full bg-blue-950 text-white"
+              
+            ><img src={feature.icon}/></div>
+            <h3 class="text-lg font-semibold text-blue-950 mb-2">
+              {feature.title}
+            </h3>
+            <p class="text-sm text-gray-600">{feature.description}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div
+      class="pt-6 grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 gap-6"
+    >
+      {
+        shortFeatures.map((feature) => (
+          <div class="flex flex-col bg-white p-4 rounded-2xl space-y-2 border-4 border-blue-900">
+            <h3 class="text-3xl font-bold text-blue-900">
+              {feature.title}
+            </h3>
+            <p class="text-sm font-medium text-gray-600">{feature.description}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

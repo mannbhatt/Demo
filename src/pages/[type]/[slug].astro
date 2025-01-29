@@ -1,0 +1,68 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import DetailedComponent from "../../components/DetailComponent";
+import {
+  fetchServices,
+  fetchProjects,
+  fetchIndustry,
+} from "../../utils/sanityData";
+
+interface DataItem {
+  slug: string;
+  title: string;
+  shortDescription: string;
+  longDescription:string;
+  videoUrl:string;
+  isFeature:boolean;
+  images: Array<{ src: string; alt?: string }>;
+}
+
+let data: DataItem[] = [];
+const { type, slug } = Astro.params;
+
+try {
+  if (type === "services") {
+    data = await fetchServices();
+  } else if (type === "projects") {
+    data = await fetchProjects();
+  } else if (type === "industries") {
+    data = await fetchIndustry();
+  } else {
+    throw new Error("Invalid type");
+  }
+} catch (error) {
+  console.error(`Error fetching ${type || "data"}:`, error);
+}
+
+const item = data.find((d) => d.slug === slug);
+
+if (!item) {
+  const typeName = type ? type.slice(0, -1) : "Item";
+  throw new Error(`${typeName} with slug "${slug}" not found`);
+}
+
+export async function getStaticPaths() {
+  let paths: { params: { type: string; slug: string } }[] = [];
+  try {
+    const [services, Projects, industries] = await Promise.all([
+      fetchServices(),
+      fetchProjects(),
+      fetchIndustry(),
+    ]);
+
+    paths = [
+      ...services.map((service) => ({ params: { type: "services", slug: service.slug } })),
+      ...Projects.map((projects) => ({ params: { type: "projects", slug: projects.slug } })),
+      ...industries.map((industry) => ({ params: { type: "industries", slug: industry.slug } })),
+    ];
+  } catch (error) {
+    console.error("Error generating paths:", error);
+  }
+
+  return paths;
+}
+---
+
+<Layout title={item.title} url={`/${type}/${slug}`}>
+  <DetailedComponent data={item} client:load />
+</Layout>

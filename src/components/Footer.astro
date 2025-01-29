@@ -1,0 +1,78 @@
+---
+import { fetchProjects, fetchIndustry, fetchServices } from "../utils/sanityData";
+
+const year = new Date().getFullYear();
+
+const services = await fetchServices();
+const indsutries = await fetchIndustry();
+const projects = await fetchProjects();
+
+const sections = [
+  {
+    title: "Services",
+    links: services.map((service) => ({
+      href: `/services/${service.slug}`,
+      text: service.title,
+    })),
+  },
+  {
+    title: "Industries",
+    links: indsutries.map((industry) => ({
+      href: `/industries/${industry.slug}`,
+      text: industry.title,
+    })),
+  },
+  {
+    title: "Projects",
+    links: projects.map((projects) => ({
+      href: `/projects/${projects.slug}`,
+      text: projects.title,
+    })),
+  },
+  {
+    title: "Company",
+    links: [
+      { href: "/", text: "Home" },
+      { href: "/about-us", text: "About Us" },
+      { href: "/#contact-us", text: "Contact Us" },
+    ],
+  },
+];
+---
+
+<footer class="bg-blue-950 text-white py-16 mt-16 space-y-16">
+  <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row gap-6">
+    <div class="flex flex-col space-y-4 flex-1">
+      <a href="/" class="block p-2 rounded-md bg-white w-fit" id="homeLink">
+        <img src="/logo.jpg" alt="Logo" class="h-14 mr-2" />
+      </a>
+      <p class="text-white">
+        Expert fabrication services for your business needs.
+      </p>
+    </div>
+
+    {
+      sections.map((section) => (
+        <div class="flex flex-col space-y-2">
+          <h3 class="text-white font-medium text-lg">{section.title}</h3>
+          <ul>
+            {section.links.map((link) => (
+              <li>
+                <a
+                  href={link.href}
+                  class="text-white/80 hover:text-white hover:underline block"
+                >
+                  {link.text}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+  </div>
+
+  <div class="text-center text-white text-sm">
+    Copyright © {year} Shivam Fabricon
+  </div>
+</footer>
